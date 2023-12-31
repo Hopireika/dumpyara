@@ -275,6 +275,7 @@ if [[ -n $GIT_OAUTH_TOKEN ]]; then
     done < .gitignore
     printf '%s\n' "${compressed_files[@]}" > compressed_files.txt
     cat > extract_files.sh << 'EOF'
+    chmod +x extract_files.sh
 #!/bin/bash
 
 while IFS= read -r file; do
