@@ -1,0 +1,46 @@
+name: Dumpyara
+
+on:
+  workflow_dispatch:
+    inputs:
+      link:
+        description: 'Direct Firmare Link'
+        required: true
+
+env:
+  DUMP_URL: ${{ github.event.inputs.link }}
+  TZ: Asia/Jakarta
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          overprovision-lvm: true
+          remove-dotnet: true
+          remove-android: true
+          remove-codeql: true
+          remove-haskell: true
+          remove-docker-images: true
+
+      - name: Set up Git
+        uses: actions/checkout@v4
+      - name: Create .githubtoken file
+        run: echo "${{ secrets.GH_TOKEN }}" > .githubtoken
+      - name: Create .tgtoken file
+        run: echo "${{ secrets.TG_TOKEN }}" > .tgtoken
+      - name: Set up environment
+        run: bash setup.sh
+      - name: Run dumpyara
+        run: |
+          if [[ $DUMP_URL == *"pixeldrain"* || $DUMP_URL == *"dlcdnets.asus.com"* ]]; then
+            wget -O dump.zip "$DUMP_URL"
+            bash dumpyara.sh dump.zip
+          else
+            bash dumpyara.sh "$DUMP_URL"
+          fi
