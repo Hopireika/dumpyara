@@ -246,12 +246,8 @@ if [[ -n $GIT_OAUTH_TOKEN ]]; then
     GITPUSH=(git push https://"$GIT_OAUTH_TOKEN"@github.com/$ORG/"${repo,,}".git "$branch")
     curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_files.txt" 2> /dev/null && echo "Firmware already dumped!" && exit 1
     git init
-    if [[ -z "$(git config --get user.email)" ]]; then
-        git config user.emal kizziama@proton.me
-    fi
-    if [[ -z "$(git config --get user.name)" ]]; then
-        git config user.name Kizziama
-    fi
+    git config --global user.email kizziama@proton.me
+    git config --global user.name Kizziama
     git config http.postBuffer 157286400
     curl -s -X POST -H "Authorization: token ${GIT_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/${ORG}/repos" #create new repo
     curl -s -X PUT -H "Authorization: token ${GIT_OAUTH_TOKEN}" -H "Accept: application/vnd.github.mercy-preview+json" -d '{ "names": ["'"$manufacturer"'","'"$platform"'","'"$top_codename"'"]}' "https://api.github.com/repos/${ORG}/${repo}/topics"
